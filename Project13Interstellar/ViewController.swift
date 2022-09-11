@@ -38,7 +38,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        guard let image = info[.editedImage] as? UIImage else { return }
+        guard let image = info[.editedImage] as? UIImage else {
+            showErrorForNoMessageSelected()
+            return }
 
         dismiss(animated: true)
 
@@ -98,7 +100,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func setFilter(action: UIAlertAction) {
         // make sure we have a valid image before continuing!
-        guard currentImage != nil else { return }
+        guard currentImage != nil else {
+            showErrorForNoMessageSelected()
+            return }
 
         // safely read the alert action's title
         guard let actionTitle = action.title else { return }
@@ -114,9 +118,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     @IBAction func save(_ sender: Any) {
         guard let image = imageView.image else {
-            let ac = UIAlertController(title: "NO IMAGE.", message: "No image is selected.", preferredStyle: .alert)
-            ac.addAction(UIAlertAction(title: "OK", style: .default))
-            present(ac, animated: true)
+           showErrorForNoMessageSelected()
             return
         }
 
@@ -129,6 +131,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBAction func radiusChanged(_ sender: Any) {
         applyProcessing()
 
+    }
+    
+    func showErrorForNoMessageSelected() {
+        let ac = UIAlertController(title: "NO IMAGE.", message: "No image is selected.", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .default))
+        present(ac, animated: true)
     }
     
     @objc func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
